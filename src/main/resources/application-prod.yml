@@ -1,0 +1,17 @@
+#服务配置
+server:
+  port: 8012  #端口
+  servlet:
+    context-path: /fbyx #应用上下文路径
+    tomcat.uri-encoding: UTF-8
+spring:
+  #mysql数据源
+  datasource:
+    url: jdbc:mysql://139.198.183.194:3306/fbyx?characterEncoding=utf8
+    username: root
+    password: qawsede2
+    driver-class-name: com.mysql.cj.jdbc.Driver
+logging.config:
+  classpath:
+    logback-spring.xml
+
