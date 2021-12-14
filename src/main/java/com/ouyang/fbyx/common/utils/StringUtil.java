@@ -52,7 +52,7 @@ public class StringUtil extends org.springframework.util.StringUtils {
 	 * </pre>
 	 */
 	public static boolean isEmpty(String str) {
-		return org.springframework.util.StringUtils.hasLength(str);
+		return !org.springframework.util.StringUtils.hasLength(str);
 	}
 	
 	/**

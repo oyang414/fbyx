@@ -36,7 +36,7 @@ public class WeChatServlet extends HttpServlet {
 
     private static final String CN_KEYWORD = "我遇到伞兵了";
 
-    private static final String FRONT_URL = "http://139.198.183.194:8022/";
+    private static final String FRONT_URL = "http://139.198.183.194:8087/";
 
     /**
      * 确认请求来自微信服务器
