@@ -17,18 +17,17 @@ public class MqttController {
     @Resource
     private MqttGateway mqttGateway;
 
-    @Resource
-    private MqttConsumerGateway mqttConsumerGateway;
-
+    /**
+     * @Author ouyangxingjie
+     * @Description 消息生产端（发布者）
+     * @Date 0:35 2022/1/31
+     * @param sendData 数据实体
+     * @param topic 主题
+     * @return java.lang.String
+     */
     @RequestMapping("/send")
     public String send(String sendData,String topic){
         mqttGateway.sendToMqtt(sendData,topic);
-        return "发送内容：<"+sendData+">成功----"+"主题："+topic;
-    }
-
-    @RequestMapping("/reply")
-    public String reply(String sendData,String topic){
-        mqttConsumerGateway.sendToMqtt(sendData,topic);
-        return "发送内容：<"+sendData+">成功----"+"主题："+topic;
+        return "发送内容：<"+sendData+"> 成功----"+" 主题："+topic;
     }
 }

@@ -16,36 +16,32 @@ import org.springframework.stereotype.Component;
 public class MqttConsumer {
 
 
-    /**
-     * MQTT消息处理器（消费者）
-     *
-     * @return {@link org.springframework.messaging.MessageHandler}
-     */
+   /**
+    * @Author ouyangxingjie
+    * @Description MQTT消息处理器 消费者-one（订阅者）
+    * @Date 0:38 2022/1/31
+    * @return org.springframework.messaging.MessageHandler
+    */
     @Bean
-    @ServiceActivator(inputChannel = "mqttConsumerInboundChannel")
+    @ServiceActivator(inputChannel = "mqttInboundChannelOne")
     public MessageHandler consumerHandler() {
-        return new MessageHandler() {
-            @Override
-            public void handleMessage(Message<?> message) throws MessagingException {
-                System.out.println("消费端收到消息："+message.getPayload());
-                System.out.println(message.toString());
-            }
+        return message -> {
+            System.out.println("one收到消息："+message.getPayload());
+            System.out.println(message);
         };
     }
     /**
-     * MQTT消息处理器（客户端）
-     *
-     * @return {@link org.springframework.messaging.MessageHandler}
+     * @Author ouyangxingjie
+     * @Description MQTT消息处理器 消费者-two（订阅者）
+     * @Date 0:38 2022/1/31
+     * @return org.springframework.messaging.MessageHandler
      */
     @Bean
-    @ServiceActivator(inputChannel = "mqttInboundChannel")
+    @ServiceActivator(inputChannel = "mqttInboundChannelTwo")
     public MessageHandler handler() {
-        return new MessageHandler() {
-            @Override
-            public void handleMessage(Message<?> message) throws MessagingException {
-                System.out.println("客户端收到消息："+message.getPayload());
-                System.out.println(message.toString());
-            }
+        return message -> {
+            System.out.println("two收到消息："+message.getPayload());
+            System.out.println(message);
         };
     }
 
