@@ -6,10 +6,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @SpringBootApplication
 @MapperScan(basePackages = "com.ouyang.fbyx.mapper")
 @ServletComponentScan   //启动器启动时，扫描本目录以及子目录带有的webservlet注解的
+@EnableAspectJAutoProxy(exposeProxy = true)
 //public class FbyxApplication extends SpringBootServletInitializer{
 public class FbyxApplication{
 
