@@ -193,7 +193,18 @@
 			<groupId>org.springframework.integration</groupId>
 			<artifactId>spring-integration-mqtt</artifactId>
 		</dependency>
-
+		<!-- elaticsearch -->
+		<!-- https://mvnrepository.com/artifact/org.elasticsearch/elasticsearch -->
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>7.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>elasticsearch-rest-high-level-client</artifactId>
+			<version>7.3.1</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>
@@ -211,6 +222,7 @@
 			<snapshots><enabled>true</enabled></snapshots>
 			<releases><enabled>false</enabled></releases>
 		</repository>
+
 	</repositories>
 	<build>
 		<plugins>
