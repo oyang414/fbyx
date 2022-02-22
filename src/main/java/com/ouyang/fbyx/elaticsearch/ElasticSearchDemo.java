@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * @author: ouyangxingjie
  * @create: 2022/2/21 22:16
  **/
-public class ElaticSearchDemo {
+public class ElasticSearchDemo {
 
     /**
      * @Author ouyangxingjie
@@ -89,7 +89,7 @@ public class ElaticSearchDemo {
     }
 
     public static void main(String[] args){
-        ElaticSearchDemo demo = new ElaticSearchDemo();
+        ElasticSearchDemo demo = new ElasticSearchDemo();
         JSONObject result = demo.query("欧阳");
         System.out.println("查询结果：");
         System.out.println(result);
