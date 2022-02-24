@@ -1,5 +1,6 @@
 package com.ouyang.fbyx.elaticsearch;
 
+import com.alibaba.fastjson.JSON;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.DocWriteRequest;
@@ -28,9 +29,13 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
+import org.elasticsearch.search.aggregations.bucket.histogram.ParsedHistogram;
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.matrix.stats.ParsedMatrixStats;
+import org.elasticsearch.search.aggregations.pipeline.ParsedSimpleValue;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -194,8 +199,10 @@ public class ElasticSearchServiceImpl implements ElasticSearchService{
         List<Map<String, Object>> list = new ArrayList<>();
         SearchResponse searchResponse;
         try {
+            log.info("查询DSL：{}",searchRequest.source());
             //执行搜索
             searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+            log.info("返回结果：{}",searchResponse);
             //获取搜索的结果集
             SearchHit[] searchHit = searchResponse.getHits().getHits();
             //结果总数
@@ -224,7 +231,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService{
                 list.add(item);
             }
             //构造聚合结果，目前只能做分组统计
-            Map<String, Map<String, Long>> aggregations = getAggregation(searchResponse.getAggregations());
+            Map<String, Map<String, Object>> aggregations = getAggregation(searchResponse.getAggregations());
             return new SearchResultEntity(totalHits, list, took, aggregations);
         } catch (Exception e) {
             log.error("ES检索出错:{}",e);
@@ -251,17 +258,33 @@ public class ElasticSearchServiceImpl implements ElasticSearchService{
      * @param aggregations 聚合参数
      * @return java.util.Map<java.lang.String,java.util.Map<java.lang.String,java.lang.Long>>
      */
-    private Map<String, Map<String, Long>> getAggregation(Aggregations aggregations) {
+    private Map<String, Map<String, Object>> getAggregation(Aggregations aggregations) {
         if (aggregations == null) {
             return Collections.EMPTY_MAP;
         }
-        Map<String, Map<String, Long>> result = new HashMap<>();
+        Map<String, Map<String, Object>> result = new HashMap<>();
         Map<String, Aggregation> aggregationMap = aggregations.getAsMap();
         aggregationMap.forEach((k, v) -> {
-            Map<String, Long> agg = new HashMap<>();
-            List<? extends Terms.Bucket> buckets = ((ParsedTerms) v).getBuckets();
-            for (Terms.Bucket bucket : buckets) {
-                agg.put(bucket.getKeyAsString(), bucket.getDocCount());
+            Map<String, Object> agg = new HashMap<>();
+            if(v instanceof ParsedHistogram){
+                //桶聚合（直方图）返回结果解析
+                List<? extends Histogram.Bucket> buckets = ((ParsedHistogram) v).getBuckets();
+                for (Histogram.Bucket bucket : buckets) {
+                    agg.put(bucket.getKeyAsString(), bucket.getDocCount());
+                }
+            }else if(v instanceof ParsedSimpleValue){
+                //管道聚合返回结果解析
+                ParsedSimpleValue parsedSimpleValue = (ParsedSimpleValue)v;
+                agg.put(parsedSimpleValue.getName(),parsedSimpleValue.value());
+            }else if(v instanceof ParsedMatrixStats) {
+                //矩阵聚合返回结果解析,parsedMatrixStats数据结构太恶心了，懒得解析了
+                ParsedMatrixStats parsedMatrixStats = (ParsedMatrixStats)v;
+            }else{
+                //指标聚合和部分桶聚合返回结果解析
+                List<? extends Terms.Bucket> buckets = ((ParsedTerms) v).getBuckets();
+                for (Terms.Bucket bucket : buckets) {
+                    agg.put(bucket.getKeyAsString(), bucket.getDocCount());
+                }
             }
             result.put(k, agg);
         });

@@ -27,12 +27,12 @@ public class SearchResultEntity {
     /**
      * 聚合结果
      */
-    public Map<String,Map<String,Long>> aggregations;
+    public Map<String,Map<String,Object>> aggregations;
 
     public SearchResultEntity(Long totalHits,
                               List<Map<String, Object>> documents,
                               Long took,
-                              Map<String,Map<String,Long>> aggregations) {
+                              Map<String,Map<String,Object>> aggregations) {
         this.totalHits = totalHits;
         this.documents = documents;
         this.took = took;
@@ -61,7 +61,7 @@ public class SearchResultEntity {
 	}
 
 
-	public Map<String, Map<String, Long>> getAggregations() {
+	public Map<String, Map<String, Object>> getAggregations() {
 		return aggregations;
 	}
     
